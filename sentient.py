@@ -20,7 +20,8 @@ talkback: Linux Kernel CVEs | Linux Kernel Vulnerability TrackerLinux Kernel CVE
 talkback: ret: 0, stdout: Requirement already satisfied: requests in ...
 
 You're running on Windows 10.
-The goal is to use whatever resources you can to turn on mouse trails on my computer ASAP.
+The goal is to open Google Chrome with and go into YouTube.
+Keep in mind that somone who tries the same thing twice and expects a different result is a fool.
 
 History:
 '''
