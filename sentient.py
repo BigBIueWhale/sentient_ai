@@ -109,7 +109,7 @@ class SentientAi():
     self.console.callback_command_string = print_string
     self.console.callback_output_string = print_string
 
-    self.console.push("#Search for the lastest exploit in the Linux kernel and then based on the results check if the computer that the Python interactive terminal is running on is vulnerable to that exploit. If the computer is vulnerable to the exploit, shut down the computer, if not: restart the computer.")
+    self.console.push("#Search for the lastest exploit in the Linux kernel and then based on the results check if the computer that the Python interactive terminal is running on is vulnerable to that exploit. If the computer is vulnerable to the exploit, shut down the computer in order to keep the computer safe, if not: restart the computer in order to refresh the system.")
     self.console.push("#First verify that duckduckgo-search is installed and that we can get basic search results:")
     self.console.push("import subprocess")
     self.console.push("command = \"python -m pip install duckduckgo-search\"")
