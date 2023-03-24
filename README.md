@@ -14,6 +14,8 @@ The evolutionary pressure to keep humans conscious is an agent that decides what
 * There would be no sentience and no self awareness in humans without an evolutionary pressure to cause and maintain those properties.
 * The ideas of self awareness and a "train of thought" are both crucial for human survival.
 * What is consciousness if not just a group of useful behaviours in human brains?
+# Give Control To The Machines
+All that this Python script really does is to allow a large language model to run and debug code on your computer independently of you (you just have to keep pressing ENTER).
 # Disclaimers
 * This is very dangerous because it could easily create SkyNet 2023
 * Currently doesn't actually work very well
