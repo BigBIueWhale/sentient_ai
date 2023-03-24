@@ -1,0 +1,29 @@
+>>>#Script to run all exe files in folder_path
+>>>#First verify that duckduckgo-search is installed and that we can get basic search results:
+>>>import subprocess
+>>>command = "python -m pip install duckduckgo-search"
+>>>process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+>>>output, error = process.communicate()
+>>>("output: " + str(output)) if output else None
+"output: b'Requirement already satisfied: duckduck ... s>=2.28.2->duckduckgo-search) (2022.12.7)\\r\\n'"
+
+>>>("error: " + str(error)) if error else None
+>>>from duckduckgo_search import ddg
+>>>results = ddg("How to search Duck Duck Go programmatically using Python")
+>>>first_result_header: str = results[0]["title"]
+>>>first_result_body: str = results[0]["body"]
+>>>first_result_link: str = results[0]["href"]
+>>>folder_path = r"C:\Users\user\Downloads\\"
+>>>#Now the full script to run all exe files in folder_path:
+Press ENTER to call OpenAI
+>>>import os
+
+Press ENTER to call OpenAI
+>>>for file in os.listdir(folder_path):
+    if file.endswith('.exe'):
+        filepath = os.path.join(folder_path, file)
+        subprocess.Popen(filepath)
+
+<Popen: returncode: None args: 'C:\\Users\\user\\D ...  'C:\\Users\\user\\Downloads\\\\python-3.11.2-...>
+
+Press ENTER to call OpenAI
