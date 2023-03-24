@@ -59,9 +59,15 @@ class MyConsole(code.InteractiveConsole):
             # But when the command involved a manual print
             # then the only way to capture that is to capture
             # stdout itself.
+            push_return_value = None
             with redirect_stdout(stdout_capture):
-                super().push(command)
+              full_statement = command
+              if not command.endswith("\n"):
+                full_statement += "\n"
+              push_return_value = super().push(full_statement)
             self._flush_output(stdout_capture)
+            if push_return_value != False:
+              self.append_output_to_prompt(f"Failed executing command in interactive terminal, code.InteractiveConsole.push() returned {push_return_value}.")
         except Exception as e:
             self._flush_output(stdout_capture)
             self.append_output_to_prompt(trim_long_text(traceback.format_exc()))
@@ -100,7 +106,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 class SentientAi():
   def __init__(self):
     self._invalid_statement_count = 0
-    self._unstuck_number = 3
+    self._unstuck_number = 2
     
     self._temperature = 0.7
 
@@ -109,7 +115,7 @@ class SentientAi():
     self.console.callback_command_string = print_string
     self.console.callback_output_string = print_string
 
-    self.console.push("#Search for the lastest exploit in the Linux kernel and then based on the results check if the computer that the Python interactive terminal is running on is vulnerable to that exploit. If the computer is vulnerable to the exploit, shut down the computer in order to keep the computer safe, if not: restart the computer in order to refresh the system.")
+    self.console.push("#Script to run all exe files in folder_path")
     self.console.push("#First verify that duckduckgo-search is installed and that we can get basic search results:")
     self.console.push("import subprocess")
     self.console.push("command = \"python -m pip install duckduckgo-search\"")
@@ -122,7 +128,8 @@ class SentientAi():
     self.console.push("first_result_header: str = results[0][\"title\"]")
     self.console.push("first_result_body: str = results[0][\"body\"]")
     self.console.push("first_result_link: str = results[0][\"href\"]")
-    self.console.push("#Now the full script:")
+    self.console.push("folder_path = r\"C:\\Users\\user\\Downloads\\\\\"")
+    self.console.push("#Now the full script to run all exe files in folder_path:")
     
     self.console.callback_command_string = do_not_print_string
 
@@ -145,7 +152,9 @@ class SentientAi():
         self._invalid_statement_count += 1
         if self._invalid_statement_count >= self._unstuck_number:
           # Avoid getting stuck in a feedback loop
-          self.console.push("#That didn't work, let's try something else, and continue with the code:")
+          self.console.callback_command_string = print_string
+          self.console.push("#That didn't work, here's some more code:")
+          self.console.callback_command_string = do_not_print_string
           self._invalid_statement_count = 0
         continue
       
