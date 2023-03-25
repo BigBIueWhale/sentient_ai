@@ -1,4 +1,4 @@
->>>#Script to run all exe files in folder_path
+>>>#Script to open YouTube with the latest video by Hank Green
 >>>#First verify that duckduckgo-search is installed and that we can get basic search results:
 >>>import subprocess
 >>>command = "python -m pip install duckduckgo-search"
@@ -13,17 +13,59 @@
 >>>first_result_header: str = results[0]["title"]
 >>>first_result_body: str = results[0]["body"]
 >>>first_result_link: str = results[0]["href"]
->>>folder_path = r"C:\Users\user\Downloads\\"
->>>#Now the full script to run all exe files in folder_path:
+>>>#Now the full script itself:
 Press ENTER to call OpenAI
->>>import os
+
+>>>import webbrowser
 
 Press ENTER to call OpenAI
->>>for file in os.listdir(folder_path):
-    if file.endswith('.exe'):
-        filepath = os.path.join(folder_path, file)
-        subprocess.Popen(filepath)
 
-<Popen: returncode: None args: 'C:\\Users\\user\\D ...  'C:\\Users\\user\\Downloads\\\\python-3.11.2-...>
+>>>url = first_result_link
+
+Press ENTER to call OpenAI
+
+>>>webbrowser.open(url)
+
+True
+
+Press ENTER to call OpenAI
+
+The statement to test: The script looks good. does not have the structure of a valid Python statement.
+Press ENTER to call OpenAI
+
+The statement to test: This script opens YouTube with the latest video by Hank Green:
+```
+import subprocess
+command = "python -m pip install duckduckgo-search"
+process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+output, error = process.communicate()
+
+from duckduckgo_search import ddg
+results = ddg("Latest Hank Green video YouTube")
+
+import webbrowser
+url = results[0]["href"]
+webbrowser.open(url)
+``` does not have the structure of a valid Python statement.
+>>>#We've come to a standstill; it's time to adopt a new tactic. back to the code now:
+Press ENTER to call OpenAI
+
+>>>print('Moving on to the next task')
+
+Moving on to the next task
+
+Press ENTER to call OpenAI
+
+>>>import webbrowser
+
+Press ENTER to call OpenAI
+
+>>>url = 'https://www.youtube.com/user/vlogbrothers/videos'
+
+Press ENTER to call OpenAI
+
+>>>webbrowser.open(url)
+
+True
 
 Press ENTER to call OpenAI
