@@ -1,4 +1,4 @@
-GOAL = "#Script to open YouTube with the latest video by Hank Green"
+GOAL = "#GOAL: Script to run on Pop!OS 22.04 to clone the latest version of the Linux kernel, compile it and run it in QEMU such that there's a hello world C program running on that kernel (not running on the host system) and outputting the text: hello world. This script is running as root."
 
 import os
 import ast
@@ -12,7 +12,7 @@ import traceback
 from io import StringIO
 from contextlib import redirect_stdout
 
-def trim_long_text(txt, length_trigger = 100) -> str:
+def trim_long_text(txt, length_trigger = 300) -> str:
   amount_over = len(txt) - length_trigger
   if amount_over > 0:
     middle_idx = len(txt) // 2
@@ -25,11 +25,15 @@ def isValidPythonStatement(statement: str) -> bool:
   except SyntaxError:
     print(f"\nThe statement to test: {statement} does not have the structure of a valid Python statement.", end="")
     return False
+  if getFirstStatement(statement) is None:
+    return False
   return True
 
-def getFirstStatement(code: str) -> str:
+def getFirstStatement(code: str) -> typing.Optional[str]:
   # parse the code into an abstract syntax tree
   tree = ast.parse(code)
+  if len(tree.body) <= 0:
+    return None
   # get the first node in the body of the module
   first_node = tree.body[0]
   # return the source code of the first node
@@ -129,7 +133,7 @@ class SentientAi():
     self._invalid_statement_count = 0
     self._unstuck_number = 2
     
-    self._temperature = 0.7
+    self._temperature = 0.9
 
     # Create an instance of the custom console class
     self.console = MyConsole()
@@ -139,6 +143,13 @@ class SentientAi():
     self.console.push(GOAL)
     self.console.push("#First verify that duckduckgo-search is installed and that we can get basic search results:")
     self.console.push("import subprocess")
+    self.console.push(\
+'''def install_python_package(package_name: str):
+  command = "python -m pip install duckduckgo-search"
+  process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+  ("output: " + str(output)) if output else None
+  ("error: " + str(error)) if error else None'''\
+)
     self.console.push("command = \"python -m pip install duckduckgo-search\"")
     self.console.push("process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)")
     self.console.push("output, error = process.communicate()")
@@ -159,7 +170,7 @@ class SentientAi():
       input("\nPress ENTER to call OpenAI")
       extended_prompt = self.console.prompt + "\n>>>"
       messages=[
-        {"role": "system", "content": "You are an assistant, complete the code by adding statements. Learn from errors in the shell history. You can't change past statements, only add new ones."},
+        {"role": "system", "content": "Your job is to complete the code by adding a single Python statement in your response. Learn from errors in the shell history. You can't change past statements, only add new ones. The code doesn't have to be finished, only write the very next, most likely Python statement. In the python script, always try to strive towards the user provided initial GOAL as fast as possible. Learn from mistakes and try to fix them. For example: if an error has been encountered: 'command git not found' then try to install git by running 'sudo apt install git'. Another example: If you receive an error that a specific Python library import failed, then try to use pip install to fix the issue. If you see the same approach being tried multiple times without success, try to gather more information: for example call 'ls' in the CWD or search the web."},
         {"role": "user", "content": "I will provide a Python interactive shell terminal output, please respond with the very next most likely Python statement. Respond with nothing but code. Now answer a boolean value of whether you understand the instructions."},
         {"role": "assistant", "content": "True"},
         {"role": "user", "content": "Let's try an example:\n>>>#print hello\n>>>"},
@@ -180,10 +191,10 @@ IndentationError: expected an indented block after 'for' statement on line 1
         {"role": "user", "content": extended_prompt}
       ]
       response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4",
         messages=messages,
         temperature = self._temperature,
-        frequency_penalty=0.9,
+        frequency_penalty=0.7,
         max_tokens=len(extended_prompt) + 512,
       )
       response_text = response['choices'][0]['message']['content'].strip()
