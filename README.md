@@ -1,6 +1,3 @@
-# Deprecated
-On Thursday March 23 2023 OpenAI announced the chat GPT plugin called: "code interpreter" that allows ChatGPT to write and run Python code in a sandboxed environment.
-This makes this GitHub repo quite obsolete because it's literally the entire idea here. The advantage of this GitHub repo is that it allows ChatGPT to write and run code in your local computer environment, which is much more exciting than a sandbox environment.
 # sentient_ai
 Just like Bing Chat except there's no user, the AI starts thinking independently.
 
