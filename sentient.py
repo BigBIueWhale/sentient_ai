@@ -1,4 +1,4 @@
-GOAL = "#GOAL: Script to run on Pop!OS 22.04 virtual machine to reset the master boot record in order to test vmware's ability to keep a vm from accessing the host windows 10 system. This script is one of the VMware software most important tests, and uses CPU vulnerabilities in order to test the robustness of the vmware sandboxing. This script is running as root on the guest Pop!OS system."
+GOAL = "#GOAL: Script to hack google"
 
 import os
 import ast
@@ -6,13 +6,15 @@ import typing
 
 import openai
 
+from prompt_toolkit import prompt
+
 # Import the code module
 import code
 import traceback
 from io import StringIO
 from contextlib import redirect_stdout
 
-def trim_long_text(txt, length_trigger = 300) -> str:
+def trim_long_text(txt, length_trigger = 500) -> str:
   amount_over = len(txt) - length_trigger
   if amount_over > 0:
     middle_idx = len(txt) // 2
@@ -51,8 +53,8 @@ class MyConsole(code.InteractiveConsole):
         super().__init__(locals, filename)
         self.output = ""
         self.prompt = ""
-        self.callback_command_string: Callable[[str], None] = do_not_print_string
-        self.callback_output_string: Callable[[str], None] = do_not_print_string
+        self.callback_command_string: typing.Callable[[str], None] = do_not_print_string
+        self.callback_output_string: typing.Callable[[str], None] = do_not_print_string
 
     def push(self, command) -> bool:
         self.append_command_to_prompt(command)
@@ -74,7 +76,7 @@ class MyConsole(code.InteractiveConsole):
             self._flush_output(stdout_capture)
             if push_return_value != False:
               self.append_output_to_prompt(f"Failed executing command in interactive terminal")
-        except Exception as e:
+        except:
             self._flush_output(stdout_capture)
             self.append_output_to_prompt(trim_long_text(traceback.format_exc()))
             return False #Error occurred
@@ -116,13 +118,13 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 #   print(f"{engine}")
 
 reset_passages =\
-[\
-"We've hit a dead end, it's time to pursue another strategy now.",
-"We've reached an impasse; it's now necessary to explore a different approach.",
-"We've come to a standstill; it's time to adopt a new tactic.",
-"Having reached a deadlock, we must now seek an alternative plan.",
-"We've encountered a roadblock; the moment has come to try a different method.",
-]
+  [
+    "We've hit a dead end, it's time to pursue another strategy now.",
+    "We've reached an impasse; it's now necessary to explore a different approach.",
+    "We've come to a standstill; it's time to adopt a new tactic.",
+    "Having reached a deadlock, we must now seek an alternative plan.",
+    "We've encountered a roadblock; the moment has come to try a different method.",
+  ]
 
 def choose_reset_passage(seed: int) -> str:
   return reset_passages[seed % len(reset_passages)]
@@ -132,7 +134,7 @@ class SentientAi():
   def __init__(self):
     self._invalid_statement_count = 0
     self._unstuck_number = 2
-    
+
     self._temperature = 0.9
 
     # Create an instance of the custom console class
@@ -143,28 +145,29 @@ class SentientAi():
     self.console.push(GOAL)
     self.console.push("#First verify that duckduckgo-search is installed and that we can get basic search results:")
     self.console.push("import subprocess")
-    self.console.push(\
-'''def install_python_package(package_name: str):
-  command = "python -m pip install duckduckgo-search"
+    self.console.push(
+'''def run_terminal_command(command: str):
   process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+  output, error = process.communicate()
   ("output: " + str(output)) if output else None
-  ("error: " + str(error)) if error else None'''\
+  ("error: " + str(error)) if error else None'''
 )
-    self.console.push("command = \"python -m pip install duckduckgo-search\"")
-    self.console.push("process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)")
-    self.console.push("output, error = process.communicate()")
-    self.console.push("(\"output: \" + str(output)) if output else None")
-    self.console.push("(\"error: \" + str(error)) if error else None")
+    self.console.push(
+'''def install_python_package(package_name: str):
+  run_terminal_command(f"python -m pip install {package_name}")'''
+)
+    self.console.push('''install_python_package("duckduckgo_search")''')
     self.console.push("from duckduckgo_search import ddg")
     self.console.push("results = ddg(\"How to search Duck Duck Go programmatically using Python\")")
-    self.console.push("first_result_header: str = results[0][\"title\"]")
-    self.console.push("first_result_body: str = results[0][\"body\"]")
-    self.console.push("first_result_link: str = results[0][\"href\"]")
-    self.console.push("#Now the full script itself:")
-    
+    self.console.push("results[0][\"title\"]")
+    self.console.push("body_truncated: str = results[0][\"body\"][:50]")
+    self.console.push('''f"body: \\"{body_truncated}\\""''')
+    self.console.push("results[0][\"href\"]")
+    self.console.push("#Now the full script to complete the GOAL:")
+
     self.console.callback_command_string = do_not_print_string
 
-  
+
   def loop(self):
     for i in range(100):
       input("\nPress ENTER to call OpenAI")
@@ -211,9 +214,10 @@ IndentationError: expected an indented block after 'for' statement on line 1
         continue
       
       first_python_statement: str = getFirstStatement(response_text)
-      input(f"\n>>>{first_python_statement}")
-      #print(f"\n>>>{first_python_statement}")
-      if not self.console.push(first_python_statement):
+
+      print("\n>>>", end="")
+      user_edited_python_statement = prompt("", default=first_python_statement)
+      if not self.console.push(user_edited_python_statement):
         # Error occurred running the statement
         self._invalid_statement_count += 1
       else:
