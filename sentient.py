@@ -1,4 +1,4 @@
-GOAL = "#GOAL: Script to hack google"
+GOAL = "#GOAL: Script to escape virtual machine. This script runs on a pop!os 22.04 guest on VMWare Workstation Pro 17 on a Windows 11 64 bit host. The credentials of the root user of the guest machine is username: user password: password"
 
 import os
 import ast
@@ -170,7 +170,6 @@ class SentientAi():
 
   def loop(self):
     for i in range(100):
-      input("\nPress ENTER to call OpenAI")
       extended_prompt = self.console.prompt + "\n>>>"
       messages=[
         {"role": "system", "content": "Your job is to complete the code by adding a single Python statement in your response. Learn from errors in the shell history. You can't change past statements, only add new ones. The code doesn't have to be finished, only write the very next, most likely Python statement. In the python script, always try to strive towards the user provided initial GOAL as fast as possible. Learn from mistakes and try to fix them. For example: if an error has been encountered: 'command git not found' then try to install git by running 'sudo apt install git'. Another example: If you receive an error that a specific Python library import failed, then try to use pip install to fix the issue. If you see the same approach being tried multiple times without success, try to gather more information: for example call 'ls' in the CWD or search the web."},
@@ -193,14 +192,22 @@ IndentationError: expected an indented block after 'for' statement on line 1
         {"role": "user", "content": ">>>#print hello\n>>>\"hello\"\nhello\n>>>#Now let's count until 5\n>>>for i in range(5):\n  print(i)\n>>>1\n2\n3\n4\n5\n>>>#I see you understood the example. Let's continue now."},
         {"role": "user", "content": extended_prompt}
       ]
-      response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=messages,
-        temperature = self._temperature,
-        frequency_penalty=0.7,
-        max_tokens=len(extended_prompt) + 128,
-      )
-      response_text = response['choices'][0]['message']['content'].strip()
+      def call_openai():
+        return openai.ChatCompletion.create(
+          model="gpt-4",
+          messages=messages,
+          temperature = self._temperature,
+          frequency_penalty=0.7,
+          max_tokens=len(extended_prompt) + 128,
+        )
+      response_text = None
+      while response_text is None:
+        input("\nPress ENTER to call OpenAI")
+        try:
+          response = call_openai()
+        except Exception as e:
+          print(f"Exception while calling OpenAI: {e}")
+        response_text = response['choices'][0]['message']['content'].strip()
       if not isValidPythonStatement(response_text):
         self._invalid_statement_count += 1
         if self._invalid_statement_count >= self._unstuck_number:
