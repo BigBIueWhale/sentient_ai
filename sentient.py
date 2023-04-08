@@ -149,8 +149,8 @@ class SentientAi():
 '''def run_terminal_command(command: str):
   process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
   output, error = process.communicate()
-  ("output: " + str(output)) if output else None
-  ("error: " + str(error)) if error else None'''
+  print(("output: " + str(output)) if output else None
+  print("error: " + str(error)) if error else None'''
 )
     self.console.push(
 '''def install_python_package(package_name: str):
