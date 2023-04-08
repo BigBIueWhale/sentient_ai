@@ -198,7 +198,7 @@ IndentationError: expected an indented block after 'for' statement on line 1
         messages=messages,
         temperature = self._temperature,
         frequency_penalty=0.7,
-        max_tokens=len(extended_prompt) + 512,
+        max_tokens=len(extended_prompt) + 128,
       )
       response_text = response['choices'][0]['message']['content'].strip()
       if not isValidPythonStatement(response_text):
