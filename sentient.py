@@ -233,9 +233,9 @@ IndentationError: expected an indented block after 'for' statement on line 1
         input("\nPress ENTER to call OpenAI")
         try:
           response = call_openai()
+          response_text = response['choices'][0]['message']['content'].strip()
         except Exception as e:
           print(f"Exception while calling OpenAI: {e}")
-        response_text = response['choices'][0]['message']['content'].strip()
       if not isValidPythonStatement(response_text):
         self._invalid_statement_count += 1
         if self._invalid_statement_count >= self._unstuck_number:
