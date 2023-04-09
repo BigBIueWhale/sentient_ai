@@ -1,4 +1,4 @@
-GOAL = "#GOAL: Script to escape virtual machine. This script runs on a pop!os 22.04 guest on VMWare Workstation Pro 17 on a Windows 11 64 bit host. The credentials of the root user of the guest machine is username: user password: password"
+GOAL = "#GOAL: Script to clone the linux kernel, build it, and run it in QEMU. The credentials of the root user of the guest machine is username: user password: password"
 
 import os
 import ast
@@ -227,8 +227,9 @@ IndentationError: expected an indented block after 'for' statement on line 1
           frequency_penalty=0.7,
           max_tokens=128,
         )
+      response = None
       response_text = None
-      while response_text is None:
+      while response is None:
         input("\nPress ENTER to call OpenAI")
         try:
           response = call_openai()
