@@ -1,7 +1,7 @@
 # sentient_ai
 Just like Bing Chat except there's no user, the AI starts thinking independently.
 
-# Large language models such as GPT 4 are already have a better intuition than most humans.
+# Large language models such as GPT 4 already have a better intuition than most humans.
 What they're currently missing is:
 * Doing things, trial and error, not just text output.
 * An independent train of thought.
