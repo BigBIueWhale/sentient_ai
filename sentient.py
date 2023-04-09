@@ -109,7 +109,7 @@ class MyConsole(code.InteractiveConsole):
       if idx >= 0:
         self.callback_command_string(f"\nDELETE {self.prompt[idx+1:]}")
         self.prompt = self.prompt[:idx]
-   
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -156,7 +156,7 @@ class SentientAi():
 )
     self.console.push(
 '''def install_python_package(package_name: str):
-  run_terminal_command(f"python -m pip install {package_name}")'''
+  run_terminal_command(f"python -m pip install {package_name} --quiet")'''
 )
     self.console.push('''install_python_package("duckduckgo_search")''')
     self.console.push("from duckduckgo_search import ddg")
@@ -165,6 +165,31 @@ class SentientAi():
     self.console.push("body_truncated: str = results[0][\"body\"][:50]")
     self.console.push('''f"body: \\"{body_truncated}\\""''')
     self.console.push("results[0][\"href\"]")
+    self.console.push("#Find desired information from the article")
+    self.console.push('''install_python_package("openai")''')
+    self.console.push("import openai")
+    self.console.push(f"openai.api_key='{openai.api_key}'")
+    self.console.push('''install_python_package("newspaper3k")''')
+    self.console.push("from newspaper import Article")
+    self.console.push(
+'''def summarize_article(url: str, query: str, max_chars_in_article=3_000, max_tokens_in_summary=300) -> str:
+  article = Article(url)
+  article.download()
+  article.parse()
+  article_size: int = len(article.text)
+  response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": article.title[:150]},
+      {"role": "assistant", "content": article.text[:max_chars_in_article]},
+      {"role": "user", "content": query}
+    ],
+    max_tokens=max_tokens_in_summary
+  )
+  return response["choices"][0]["message"]["content"]'''
+)
+    self.console.push('''summarize_article(results[0]["href"], "Tell me one short interesting fact about DuckDuckGo.")''')
     self.console.push("#Now the full script to complete the GOAL:")
 
     self.console.callback_command_string = do_not_print_string
@@ -200,7 +225,7 @@ IndentationError: expected an indented block after 'for' statement on line 1
           messages=messages,
           temperature = self._temperature,
           frequency_penalty=0.7,
-          max_tokens=len(extended_prompt) + 128,
+          max_tokens=128,
         )
       response_text = None
       while response_text is None:
@@ -221,7 +246,7 @@ IndentationError: expected an indented block after 'for' statement on line 1
           self.console.push(f"#{choose_reset_passage(self._invalid_statement_count)} back to the code now:")
           self.console.callback_command_string = do_not_print_string
         continue
-      
+
       first_python_statement: str = getFirstStatement(response_text)
 
       print("\n>>>", end="")
